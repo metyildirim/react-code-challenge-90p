@@ -23,6 +23,9 @@ export const Title = styled.span`
   font-weight: 700;
   color: ${colors.dark};
   font-size: 24px;
+  @media (max-width: 540px) {
+    font-size: 18px;
+  }
 `;
 
 export const Subtitle = styled.span`

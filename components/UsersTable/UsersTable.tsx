@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Image from "next/image";
 import {
   PaginationContainer,
@@ -17,22 +18,21 @@ import Box from "../Box";
 import Button from "../Button";
 import { colors } from "../../config/theme";
 import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { DELETE_MUTATION } from "../../app/mutations";
+import { USERS_QUERY } from "../../app/queries";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "../../app/hooks";
-import { UserState, setUser } from "../../app/userSlice";
+import { setUser } from "../../app/userSlice";
 
-const DELETE_MUTATION = gql`
-  mutation Delete_users_by_pk($deleteUsersByPkId: Int!) {
-    delete_users_by_pk(id: $deleteUsersByPkId) {
-      id
-    }
+const arrayChunk = (arr: Array<never>, len: number) => {
+  const chunks = [];
+  let i = 0;
+  const n = arr.length;
+  while (i < n) {
+    chunks.push(arr.slice(i, (i += len)));
   }
-`;
-
-export type TableProps = {
-  userdata: Array<UserType>;
-  refetch: () => void;
+  return chunks;
 };
 
 export type UserType = {
@@ -44,21 +44,46 @@ export type UserType = {
   date_of_birth: string;
 };
 
-const Table = ({ userdata, refetch }: TableProps) => {
+const Table = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [userID, setUserID] = useState(0);
+  const [page, setPage] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleteUser, { data, loading, error }] = useMutation(DELETE_MUTATION);
+  const { data, refetch } = useQuery(USERS_QUERY);
+  const [userChunks, setUserChunks] = useState([[]]);
+  const chunkSize = 20;
+
+  useEffect(() => {
+    refetch()?.then(() => {
+      if (data) {
+        setUserChunks(arrayChunk(data.users, chunkSize));
+      }
+    });
+  }, [data, refetch]);
+
+  const [deleteUser] = useMutation(DELETE_MUTATION);
 
   const PaginationSection = () => (
     <PaginationContainer>
-      <RowCount>{userdata.length} rows</RowCount>
-      <PaginationButton>
+      <RowCount>{data?.users.length} Total Users</RowCount>
+      <PaginationButton
+        disabled={page === 0}
+        onClick={() => {
+          setPage(page - 1);
+        }}
+      >
         <Image src="/chevron-left.svg" height="24px" width="16px" alt="back" />
       </PaginationButton>
-      <CurrentRow>1 / 1</CurrentRow>
-      <PaginationButton>
+      <CurrentRow>
+        {page + 1} / {Math.floor((data?.users?.length - 1) / chunkSize) + 1}
+      </CurrentRow>
+      <PaginationButton
+        disabled={page === Math.floor((data?.users?.length - 1) / chunkSize)}
+        onClick={() => {
+          setPage(page + 1);
+        }}
+      >
         <Image src="/chevron-right.svg" height="24px" width="16px" alt="back" />
       </PaginationButton>
     </PaginationContainer>
@@ -69,16 +94,16 @@ const Table = ({ userdata, refetch }: TableProps) => {
       <TableItem width="100px" fontSize="12px">
         ID
       </TableItem>
-      <TableItem width="200px" fontSize="12px">
+      <TableItem width="150px" fontSize="12px">
         Full Name
       </TableItem>
-      <TableItem width="200px" fontSize="12px">
+      <TableItem width="150px" fontSize="12px">
         Email
       </TableItem>
-      <TableItem width="150px" fontSize="12px">
+      <TableItem width="100px" fontSize="12px">
         Phone
       </TableItem>
-      <TableItem width="200px" fontSize="12px">
+      <TableItem width="100px" fontSize="12px">
         Date of Birth
       </TableItem>
     </TableHeader>
@@ -92,6 +117,7 @@ const Table = ({ userdata, refetch }: TableProps) => {
           <Button
             onClick={() => {
               deleteUser({ variables: { deleteUsersByPkId: userID } });
+              setPage(0);
               setModalVisible(false);
               setTimeout(refetch, 1000);
             }}
@@ -122,15 +148,15 @@ const Table = ({ userdata, refetch }: TableProps) => {
         {modalVisible ? DeleteModal() : null}
         {PaginationSection()}
         {HeaderSection()}
-        {userdata.map(
+        {userChunks[page].map(
           ({ id, name, lastname, email, phone, date_of_birth }: UserType) => (
             <TableRow key={id}>
               <TableItem width="100px">{id}</TableItem>
-              <TableItem width="200px">{`${name} ${lastname}`}</TableItem>
-              <TableItem width="200px">{email}</TableItem>
-              <TableItem width="150px">{phone}</TableItem>
-              <TableItem width="200px">{date_of_birth}</TableItem>
-              <TableItem width="100px">
+              <TableItem width="150px">{`${name} ${lastname}`}</TableItem>
+              <TableItem width="150px">{email}</TableItem>
+              <TableItem width="100px">{phone}</TableItem>
+              <TableItem width="100px">{date_of_birth}</TableItem>
+              <TableItem width="50px">
                 <TableAction
                   onClick={() => {
                     dispatch(

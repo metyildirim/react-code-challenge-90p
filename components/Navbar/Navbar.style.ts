@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { rootCertificates } from "tls";
 import { colors } from "../../config/theme";
 
 export type ImageProps = {
@@ -8,7 +7,7 @@ export type ImageProps = {
   rotation?: boolean;
 };
 
-export type NavitemContainerProps = {
+export type NavContainerProps = {
   visible: boolean;
 };
 
@@ -21,12 +20,42 @@ export const StyledNavbar = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    position: relative;
+    height: auto;
+    width: 100vw;
+  }
 `;
 
 export const Logo = styled.img<ImageProps>`
   height: 55px;
   width: 55px;
   margin-bottom: 50px;
+  @media (max-width: 1024px) {
+    height: 35px;
+    width: 35px;
+    margin-bottom: 30px;
+  }
+`;
+
+export const HamburgerButton = styled.img<ImageProps>`
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  display: none;
+  :active {
+    background-color: white;
+  }
+
+  @media (max-width: 1024px) {
+    display: block;
+  }
+  position: absolute;
+  top: 25px;
+  left: 20px;
+  border-radius: 5px;
+  padding: 10px;
 `;
 
 export const Navlink = styled.div`
@@ -60,11 +89,20 @@ export const Text = styled.span`
   margin-left: 10px;
 `;
 
-export const NavitemContainer = styled.div<NavitemContainerProps>`
-  max-height: ${(props) => (props.visible ? "0px" : "70px")};
+export const NavitemContainer = styled.div<NavContainerProps>`
+  max-height: ${(props) => (props.visible ? "0px" : "120px")};
   width: 100%;
   overflow: hidden;
   transition: all 0.25s;
+`;
+
+export const NavContent = styled.div<NavContainerProps>`
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.25s;
+  @media (max-width: 1024px) {
+    max-height: ${(props) => (props.visible ? "0px" : "200px")};
+  }
 `;
 
 export const Navitem = styled.span`

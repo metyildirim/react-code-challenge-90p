@@ -1,16 +1,9 @@
-import { useMutation, gql } from "@apollo/client";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { Box, Input, Button } from "..";
+import { CREATE_MUTATION } from "../../app/mutations";
+import { useMutation } from "@apollo/client";
 import { StyledForm } from "./CreateUser.styles";
-
-const CREATE_MUTATION = gql`
-  mutation Mutation_root($object: users_insert_input!) {
-    insert_users_one(object: $object) {
-      id
-    }
-  }
-`;
 
 const CreateUser = () => {
   const router = useRouter();

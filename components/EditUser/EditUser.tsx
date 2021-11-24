@@ -2,20 +2,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Box, Input, Button } from "..";
 import { StyledForm } from "./EditUser.style";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { UPDATE_MUTATION } from "../../app/mutations";
 import { useAppSelector } from "../../app/hooks";
 import { selectUser } from "../../app/userSlice";
-
-const UPDATE_MUTATION = gql`
-  mutation Mutation_root(
-    $pkColumns: users_pk_columns_input!
-    $set: users_set_input
-  ) {
-    update_users_by_pk(pk_columns: $pkColumns, _set: $set) {
-      id
-    }
-  }
-`;
 
 const EditUser = () => {
   const router = useRouter();

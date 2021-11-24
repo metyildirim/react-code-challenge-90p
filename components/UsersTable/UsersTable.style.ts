@@ -11,7 +11,7 @@ export const StyledTable = styled.div`
 `;
 
 export const TableHeader = styled.div`
-  min-width: 996px;
+  min-width: 750px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,7 +22,7 @@ export const TableHeader = styled.div`
 `;
 
 export const TableRow = styled.div`
-  min-width: 996px;
+  min-width: 750px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -35,6 +35,12 @@ export const TableRow = styled.div`
 
   & > div > button {
     visibility: hidden;
+  }
+
+  @media (max-width: 1124px) {
+    & > div > button {
+      visibility: visible;
+    }
   }
 
   :hover {
@@ -91,6 +97,10 @@ export const PaginationButton = styled.button`
   }
   :active {
     background-color: white;
+  }
+  :disabled {
+    background-color: ${colors.darkbg};
+    cursor: default;
   }
 `;
 

@@ -14,6 +14,9 @@ export const StyledBox = styled.div<BoxProps>`
   background-color: white;
   overflow-x: hidden;
   margin-bottom: 20px;
+  @media (max-width: 540px) {
+    padding: 10px;
+  }
 `;
 
 export const HeaderContainer = styled.div`
