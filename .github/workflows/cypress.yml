@@ -17,13 +17,7 @@ jobs:
         run: yarn install
       - name: Build
         run: CI=true yarn build
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install modules
-        run: yarn install
-      - name: Run Tests
+      - name: Run Cypress
         run: CI=true yarn e2e:headless
         env:
           GRAPHQL_ENDPOINT: ${{ secrets.GRAPHQL_ENDPOINT }}

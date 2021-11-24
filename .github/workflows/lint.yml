@@ -9,7 +9,7 @@ on:
       - master
       - development
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
