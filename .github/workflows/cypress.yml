@@ -1,4 +1,4 @@
-name: Test
+name: Cypress
 on:
   push:
     branches:
@@ -10,6 +10,14 @@ on:
       - development
 jobs:
   build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn install
+      - name: Build
+        run: CI=true yarn build
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
